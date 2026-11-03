@@ -1,61 +1,47 @@
 
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gita AI Support</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#eef4f1;font-family:Arial,sans-serif}
-.app{max-width:480px;margin:auto;height:100vh;background:white;display:flex;flex-direction:column}
-header{background:#087d55;color:white;padding:22px}
-header h2{margin:0 0 5px}
-header p{margin:0;font-size:13px}
-#chat{flex:1;padding:18px;overflow:auto}
-.msg{padding:12px 15px;margin:10px 0;border-radius:15px;max-width:85%;line-height:1.5}
-.bot{background:#e9f5ef;align-self:flex-start}
-.user{background:#087d55;color:white;margin-left:auto}
-.input{display:flex;padding:12px;gap:8px;border-top:1px solid #ddd}
-input{flex:1;min-width:0;padding:13px;border:1px solid #ccc;border-radius:25px;font-size:15px}
-button{background:#087d55;color:white;border:0;padding:12px 18px;border-radius:25px}
-</style>
-</head>
-<body>
-<div class="app">
-<header>
-<h2>Gita AI Support 🤖</h2>
-<p>Gita Electronics | JioMart Digital</p>
-<p>● Customer Support Online</p>
-</header>
-<div id="chat">
-<div class="msg bot">नमस्ते! 🙏 Gita Electronics में आपका स्वागत है। मैं आपकी क्या सहायता कर सकता हूँ?</div>
-</div>
-<div class="input">
-<input id="message" placeholder="अपना सवाल लिखें...">
-<button onclick="send()">Send</button>
-</div>
-</div>
-<script>
-function send(){
-let input=document.getElementById('message');
-let q=input.value.trim();
-if(!q)return;
-let chat=document.getElementById('chat');
-chat.innerHTML+='<div class="msg user"></div>';
-chat.lastElementChild.textContent=q;
-input.value='';
-let answer="धन्यवाद! आपकी जानकारी मिल गई है। हमारी Gita Electronics टीम जल्द आपकी सहायता करेगी।";
-if(q.includes("मोबाइल")) answer="हमारे स्टोर पर मोबाइल की जानकारी और उपलब्ध ऑफर्स के लिए संपर्क करें।";
-if(q.includes("टीवी")||q.includes("TV")) answer="टीवी की कीमत और उपलब्धता जानने के लिए अपना मॉडल बताइए।";
-if(q.includes("शिकायत")) answer="कृपया अपनी शिकायत और मोबाइल नंबर बताइए। हमारी टीम सहायता करेगी।";
-chat.innerHTML+='<div class="msg bot"></div>';
-chat.lastElementChild.textContent=answer;
-chat.scrollTop=chat.scrollHeight;
+const API_URL = "https://script.google.com/macros/s/AKfycbxf6eFD8m88iFOPuUAxr96-aMIJtAMt6BWFobiFL7nmBgMEe94Wg_wQ9tys8wmpxG-z/exec";
+
+async function send() {
+  const input = document.getElementById("message");
+  const chat = document.getElementById("chat");
+  const q = input.value.trim();
+
+  if (!q) return;
+
+  const userMsg = document.createElement("div");
+  userMsg.className = "msg user";
+  userMsg.textContent = q;
+  chat.appendChild(userMsg);
+
+  input.value = "";
+
+  const loading = document.createElement("div");
+  loading.className = "msg bot";
+  loading.textContent = "जवाब तैयार हो रहा है...";
+  chat.appendChild(loading);
+
+  chat.scrollTop = chat.scrollHeight;
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({ message: q })
+    });
+
+    const data = await response.json();
+    loading.textContent = data.answer || "अभी जवाब नहीं मिला।";
+
+  } catch (error) {
+    loading.textContent =
+      "कनेक्शन में समस्या है। कृपया दोबारा कोशिश करें।";
+  }
+
+  chat.scrollTop = chat.scrollHeight;
 }
-document.getElementById('message').addEventListener('keydown',e=>{
-if(e.key==='Enter')send();
+
+document.getElementById("message").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") send();
 });
-</script>
-</body>
-</html>
