@@ -1,1 +1,0 @@
-# gita-ai-support
