@@ -1,0 +1,11 @@
+{
+  "name": "Ujjwal AI",
+  "short_name": "Ujjwal AI",
+  "description": "Your Personal AI Assistant",
+  "start_url": "/gita-ai-support/",
+  "scope": "/gita-ai-support/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#101827",
+  "theme_color": "#101827"
+}
