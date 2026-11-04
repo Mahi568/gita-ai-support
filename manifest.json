@@ -3,11 +3,19 @@
   "id": "/gita-ai-support/",
   "name": "Ujjwal AI",
   "short_name": "Ujjwal AI",
-  "description": "Ujjwal AI - Your Personal AI Assistant. Hindi and English AI Chat with Voice Support.",
+  "description": "Your Personal AI Assistant",
   "start_url": "/gita-ai-support/",
   "scope": "/gita-ai-support/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#101827",
-  "theme_color": "#101827"
+  "theme_color": "#101827",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
