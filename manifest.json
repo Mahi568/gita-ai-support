@@ -1,7 +1,9 @@
+
 {
+  "id": "/gita-ai-support/",
   "name": "Ujjwal AI",
   "short_name": "Ujjwal AI",
-  "description": "Your Personal AI Assistant",
+  "description": "Ujjwal AI - Your Personal AI Assistant. Hindi and English AI Chat with Voice Support.",
   "start_url": "/gita-ai-support/",
   "scope": "/gita-ai-support/",
   "display": "standalone",
