@@ -1,4 +1,3 @@
-
 {
   "id": "/gita-ai-support/",
   "name": "Ujjwal AI",
@@ -7,7 +6,6 @@
   "start_url": "/gita-ai-support/",
   "scope": "/gita-ai-support/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#101827",
   "theme_color": "#101827",
   "icons": [
