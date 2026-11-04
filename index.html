@@ -4,72 +4,263 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gita AI Support</title>
+<meta name="theme-color" content="#10172b">
+<title>Ujjwal AI</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#eef4f1;font-family:Arial}
-.app{max-width:480px;margin:auto;height:100vh;background:white;display:flex;flex-direction:column}
-header{background:#087d55;color:white;padding:20px}
-#chat{flex:1;padding:15px;overflow:auto}
-.msg{padding:12px;margin:10px 0;border-radius:15px;max-width:85%;line-height:1.5}
-.bot{background:#e9f5ef}
-.user{background:#087d55;color:white;margin-left:auto}
-.input{display:flex;padding:12px;gap:8px;border-top:1px solid #ddd}
-input{flex:1;min-width:0;padding:12px;border:1px solid #ccc;border-radius:25px}
-button{background:#087d55;color:white;border:0;padding:12px 18px;border-radius:25px}
+body{
+ margin:0;background:#0b1020;color:white;
+ font-family:Arial,sans-serif;
+}
+.app{
+ max-width:600px;margin:auto;height:100dvh;
+ display:flex;flex-direction:column;
+ background:#111a30;
+}
+header{
+ padding:17px;background:#182743;
+ display:flex;align-items:center;gap:12px;
+ border-bottom:1px solid #30405c;
+}
+.logo{
+ width:45px;height:45px;border-radius:15px;
+ background:linear-gradient(135deg,#3978ff,#9a48f5);
+ display:grid;place-items:center;font-size:25px;
+}
+header h2{margin:0;font-size:21px}
+header p{margin:5px 0 0;color:#aab9d2;font-size:12px}
+.new{
+ margin-left:auto;background:#263957;
+ padding:9px 12px;border-radius:10px;
+ font-size:12px;cursor:pointer;
+}
+#chat{
+ flex:1;overflow-y:auto;padding:16px;
+ scroll-behavior:smooth;
+}
+.welcome{
+ text-align:center;margin:35px 5px 25px;
+}
+.welcome .big{font-size:48px}
+.welcome h2{font-size:24px}
+.welcome p{color:#aab9d2;line-height:1.6}
+.msg{
+ padding:13px 15px;margin:13px 0;
+ border-radius:16px;max-width:88%;
+ line-height:1.6;white-space:pre-wrap;
+ overflow-wrap:anywhere;
+}
+.bot{background:#24334e;color:white}
+.user{
+ background:#316ce9;color:white;
+ margin-left:auto;
+}
+.loading{color:#aab9d2}
+.input-area{
+ padding:12px;background:#182743;
+ border-top:1px solid #30405c;
+}
+.input{
+ display:flex;gap:8px;align-items:center;
+}
+input{
+ flex:1;min-width:0;padding:15px;
+ border:1px solid #41516e;
+ border-radius:25px;background:#263957;
+ color:white;font-size:15px;outline:none;
+}
+input::placeholder{color:#aab9d2}
+button{
+ border:0;border-radius:50%;width:45px;
+ height:45px;background:#3978ff;
+ color:white;font-size:19px;cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:default}
+.mic{background:#7149d8}
+.voice-active{background:#d33d58}
+.tools{
+ display:flex;justify-content:space-between;
+ color:#aab9d2;font-size:11px;
+ padding:9px 5px 0;
+}
+#status{color:#70d9a3}
 </style>
 </head>
+
 <body>
 <div class="app">
+
 <header>
-<h2>Gita AI Support 🤖</h2>
-<p>Gita Electronics | JioMart Digital</p>
+ <div class="logo">🤖</div>
+ <div>
+  <h2>Ujjwal AI</h2>
+  <p>Your Personal AI Assistant</p>
+ </div>
+ <div class="new" onclick="newChat()">＋ New Chat</div>
 </header>
+
 <div id="chat">
-<div class="msg bot">नमस्ते! 🙏 Gita Electronics में आपका स्वागत है। मैं आपकी क्या सहायता कर सकता हूँ?</div>
+ <div class="welcome" id="welcome">
+  <div class="big">✨</div>
+  <h2>नमस्ते! मैं Ujjwal AI हूँ</h2>
+  <p>आप मुझसे कुछ भी पूछ सकते हैं।<br>
+  मैं आपकी सहायता के लिए यहाँ हूँ।</p>
+ </div>
+ <div class="msg bot">
+ नमस्ते! 🙏 आपका स्वागत है। बताइए, मैं आपकी क्या मदद कर सकता हूँ?
+ </div>
 </div>
-<div class="input">
-<input id="message" placeholder="अपना सवाल लिखें...">
-<button onclick="send()">Send</button>
+
+<div class="input-area">
+ <div class="input">
+  <input id="message" placeholder="यहाँ अपना सवाल लिखें..." autocomplete="off">
+  <button class="mic" id="mic" onclick="voiceInput()" title="बोलकर पूछें">🎤</button>
+  <button id="sendBtn" onclick="send()" title="Send">➤</button>
+ </div>
+ <div class="tools">
+  <span id="status">● AI Ready</span>
+  <span>Ujjwal AI • Powered by Gemini</span>
+ </div>
 </div>
+
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbxf6eFD8m88iFOPuUAxr96-aMIJtAMt6BWFobiFL7nmBgMEe94Wg_wQ9tys8wmpxG-z/exec";
 
-async function send() {
-const input = document.getElementById("message");
 const chat = document.getElementById("chat");
-const q = input.value.trim();
-if (!q) return;
+const input = document.getElementById("message");
+const sendBtn = document.getElementById("sendBtn");
+const statusText = document.getElementById("status");
 
-const userMsg = document.createElement("div");
-userMsg.className = "msg user";
-userMsg.textContent = q;
-chat.appendChild(userMsg);
-input.value = "";
+let busy = false;
 
-const loading = document.createElement("div");
-loading.className = "msg bot";
-loading.textContent = "जवाब तैयार हो रहा है...";
-chat.appendChild(loading);
-
-try {
-const response = await fetch(API_URL, {
-method: "POST",
-headers: {"Content-Type": "text/plain;charset=utf-8"},
-body: JSON.stringify({message:q})
-});
-const data = await response.json();
-loading.textContent = data.answer || "अभी जवाब नहीं मिला।";
-} catch(error) {
-loading.textContent = "कनेक्शन में समस्या है। कृपया दोबारा कोशिश करें।";
-}
-chat.scrollTop = chat.scrollHeight;
+function addMessage(text,type){
+ const div=document.createElement("div");
+ div.className="msg "+type;
+ div.textContent=text;
+ chat.appendChild(div);
+ chat.scrollTop=chat.scrollHeight;
+ return div;
 }
 
-document.getElementById("message").addEventListener("keydown",function(e){
-if(e.key==="Enter") send();
+async function send(){
+ const q=input.value.trim();
+ if(!q || busy)return;
+
+ busy=true;
+ sendBtn.disabled=true;
+ statusText.textContent="● जवाब तैयार हो रहा है...";
+
+ document.getElementById("welcome")?.remove();
+
+ addMessage(q,"user");
+ input.value="";
+
+ const loading=addMessage("जवाब तैयार हो रहा है...","bot loading");
+
+ try{
+  const response=await fetch(API_URL,{
+   method:"POST",
+   headers:{"Content-Type":"text/plain;charset=utf-8"},
+   body:JSON.stringify({message:q})
+  });
+
+  if(!response.ok)throw new Error("Server error");
+
+  const data=await response.json();
+  const answer=data.answer || "अभी जवाब नहीं मिला।";
+
+  loading.classList.remove("loading");
+  loading.textContent=answer;
+
+  const speak=document.createElement("button");
+  speak.textContent="🔊";
+  speak.title="जवाब सुनें";
+  speak.style.cssText="width:36px;height:36px;margin-top:8px";
+  speak.onclick=()=>speakText(answer);
+  loading.appendChild(document.createElement("br"));
+  loading.appendChild(speak);
+
+  statusText.textContent="● AI Ready";
+
+ }catch(error){
+  loading.textContent="कनेक्शन में समस्या है। इंटरनेट और API URL चेक करें।";
+  statusText.textContent="● Connection Error";
+ }finally{
+  busy=false;
+  sendBtn.disabled=false;
+  input.focus();
+  chat.scrollTop=chat.scrollHeight;
+ }
+}
+
+function speakText(text){
+ if(!("speechSynthesis" in window)){
+  alert("इस ब्राउज़र में Voice सुविधा उपलब्ध नहीं है।");
+  return;
+ }
+ speechSynthesis.cancel();
+ const speech=new SpeechSynthesisUtterance(text);
+ speech.lang="hi-IN";
+ speech.rate=1;
+ speechSynthesis.speak(speech);
+}
+
+function voiceInput(){
+ const SpeechRecognition =
+ window.SpeechRecognition || window.webkitSpeechRecognition;
+
+ if(!SpeechRecognition){
+  alert("Voice Input के लिए Android Chrome में खोलें।");
+  return;
+ }
+
+ const recognition=new SpeechRecognition();
+ recognition.lang="hi-IN";
+ recognition.interimResults=false;
+
+ const mic=document.getElementById("mic");
+
+ recognition.onstart=()=>{
+  mic.classList.add("voice-active");
+  statusText.textContent="● सुन रहा हूँ...";
+ };
+
+ recognition.onresult=(event)=>{
+  input.value=event.results[0][0].transcript;
+  send();
+ };
+
+ recognition.onerror=()=>{
+  statusText.textContent="● Voice Error";
+ };
+
+ recognition.onend=()=>{
+  mic.classList.remove("voice-active");
+  if(!busy)statusText.textContent="● AI Ready";
+ };
+
+ recognition.start();
+}
+
+function newChat(){
+ if(busy)return;
+ speechSynthesis?.cancel();
+ chat.innerHTML=`
+ <div class="welcome" id="welcome">
+ <div class="big">✨</div>
+ <h2>नमस्ते! मैं Ujjwal AI हूँ</h2>
+ <p>आप मुझसे कुछ भी पूछ सकते हैं।</p>
+ </div>
+ <div class="msg bot">नमस्ते! 🙏 बताइए, मैं आपकी क्या मदद कर सकता हूँ?</div>
+ `;
+ statusText.textContent="● AI Ready";
+}
+
+input.addEventListener("keydown",e=>{
+ if(e.key==="Enter")send();
 });
 </script>
 </body>
